@@ -1,182 +1,178 @@
-(function(){
 
+var importedt = document.createElement('script');
+importedt.src = 'js/toast.js';
+document.head.appendChild(importedt);
 
-
-let lives = 5;
-let score = 0;
-let heartsGained = 0;
-let crossed = 0;
+function updateView(text){
+  iqwerty.toast.Toast(text);
+}
 let isGameOver = false;
+let lives = 3;
+let crossed = 0;
+class Character {
+  // Pass in parameters to control character speed and location
+  constructor(x, y, speed) {
+    this.x = x;
+    this.y = y;
+    this.speed = speed;
+    this.sprite = '';
+  }
 
-//	lives = document.querySelector('.lives > span'),
-	score = document.querySelector('.score > span');
+  // Draw the character on the canvas
+  render() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  }
+}
 
-// Enemies our player must avoid
-  var Enemy = function Enemy(x,y,s){  //initialize the Enemy object
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
+// character subclass for enemies
+class Enemy extends Character {
 
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
+  // Take same parameters as parent class, but use specific sprite
+  constructor(x, y, speed) {
+    super(x, y, speed); // to call the parent class and add character image
     this.sprite = 'images/enemy-bug.png';
-    this.x = x; //x position of enemy
-    this.y = y; //y position of enemy
-    this.speed = s; //speed of enemey moving across the board
-};
-const Player = function(){  //initialize the player object
+  }
 
-    this.sprite = 'images/char-cat-girl.png';
-    this.x = 310; //x position of player when the game load
-    this.y = 305; //y position of enemy
-    this.h_step = 202; //the length of one step horizontally
-    this.v_step = 85;
-};
+  // Control changes to the enemy when stuff happens
+  update(dt) {
 
 
-
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) { //this function when the enemies move , it will capture itspositions and speeds and do something wth it
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
     this.x += this.speed * dt;
-    if(this.x > 505){ //if the enemy moves out the board don't allow him just back his position
+    if(this.x > 700){ //if the enemy moves out the board don't allow him just back his position
       this.x = -100; //to back it from beginning if go out of canvas picture with random speed
-      var randomSpeed = Math.floor(Math.random() * 4 + 1); //assign random speed to the enemy
+    var randomSpeed = Math.floor(Math.random() * 4 + 1); //assign random speed to the enemy
       this.speed = 120 * randomSpeed;
       //(60 + (score > 0 ? score / 20 : score)) * randomSpeed; //this is to move it faster than the random speed
     }
 
     //how to detect the collition of Enemy by calculating the space arround enemy that max allowed space other than that is a checkCollision
-    var eLeftMaxX = this.x - 40;
-    var eRightMaxX = this.x + 40;
-    var eYTopMax = this.y - 40;
-    var eYBottomMax = this.y + 40;
+    var eLeftMaxX = this.x - 30;
+    var eRightMaxX = this.x + 30;
+    var eYTopMax = this.y - 30;
+    var eYBottomMax = this.y + 30;
     if(player.x > eLeftMaxX && player.x < eRightMaxX && player.y > eYTopMax && player.y < eYBottomMax ){
-      player.resetPosition();
       lives--;
       updateView('you died.'+ lives + ' lives remaining');
-      if(lives === 0){
+      player.resetPosition();
+      if (lives === 0){
+        updateView('You died there is no remaining lives!');
+        alert('Game is over');
         player.resetPosition();
         isGameOver = true;
-        updateView('You died there is no remaining lives!');
-				alert('Game is over');
-    }
+      }
+}
+
+}
 
 
 }
-};
-// Draw the enemy on the screen, required method for game
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-Player.prototype.update = function(dt) { //this function when the enemies move , it will capture itspositions and speeds and do something wth it
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
-    this.x += this.speed * dt;
-    if(this.x > 505){ //if the enemy moves out the board don't allow him just back his position
-      this.x = -100; //to back it from beginning if go out of canvas picture with random speed
-    }
-};
-Player.prototype.resetPosition = function() { //this function when the enemies move , it will capture itspositions and speeds and do something wth it
 
-    this.x = 303;
-    this.y = 404;
-};
+// Sprite subclass for player
+class Player extends Character {
 
-
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
-Player.prototype.handleInput = function(direction){
-
-  switch (direction){
-    case 'left':
-    if (this.x >= this.h_step){
-      this.x -= this.h_step;  //to turn the player left by decrease x axis
-    }else{
-      this.x -= 0;
-    }
-    break;
-    case 'right':
-    this.x <= (this.h_step * 5) ? this.x += this.h_step : this.x += 0;
-    break;
-    case 'up':
-    this.y -= this.v_step;
-    if(this.y <= 50){
-      score += 10;
-      crossed++;
-      updateView('Congraluation you win the game, your score is : '+score)
-      window.gem = new Gem();
-      if(crossed % 5 === 0){
-        window.heart = new Heart() //to initialize the heart to beginning of the game
-        this.resetPosition();
-      }
-    }
-    break;
-    case 'down':
-    this.y <= (this.v_step * 4) ? this.y += this.v_step : this.y +=0;
-    break;
-
+  // Take same parameters as parent class, but use specific sprite
+  constructor(x, y, speed) {
+    super(x, y, speed);
+    this.sprite = 'images/char-boy.png';
 
   }
-};
 
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-const gems = [
-  { name: 'Blue Gem' , image: 'images/gemBlue.png' , value: 50},
-    { name: 'Green Gem' , image: 'images/gemGreen.png' , value: 20},
-      { name: 'Orange Gem' , image: 'images/gemOrange.png' , value: 10},
-];
+  // Default function for updating
+  update() {}
+  resetPosition(){
+    this.x = 303;
+    this.y = 404;
+  }
 
-const players = [
-  'images/char-boy.png',
-  'images/char-cat-girl.png',
-  'images/char-horn-girl.png',
-  'images/char-pink-girl.png',
-  'images/char-princess-girl.png',
-];
+  // When the player reaches the water, speed up enemies
+  greatSuccess() {
+    speedUp += 25;
+    this.resetGame();
+  }
+  // Start over once the player reaches the water
+   resetGame() {
+     this.startingX = 200;
+     this.startingY = 380;
+     this.x = this.startingX;
+     this.y = this.startingY;
+     player.resetPosition();
+     alert('Congraluation you cross and win, you will go to the next level');
+   }
 
-window.player = new Player();
-// window.gem = new Gem();
-// window.heart = new Heart();
-// window.selector = new Selector();
+  // Player controls
+  handleInput(allowedKeys) {
+    switch (allowedKeys) {
 
-// Now instantiate your objects.
-let allEnemies = [];
-// Canvas position of created enemies and player x, y, movement
-let enemyPosition = [50, 135, 220];
-let player = new Player(200, 400, 50);
+      // Left arrow key pressed
+      case "left":
+        // Don't allow movement past left edge
+        if (this.x > 0) {
+          this.x -= 101;
+        }
+        break;
 
-//Creates array of enemy objects
-enemyPosition.forEach((enemyPositionCoordinate) => {
-	let enemy = new Enemy(0, enemyPositionCoordinate, 100 + Math.floor(Math.random() * 500));
-	allEnemies.push(enemy);
-	// console.log(allEnemies);
-});
+      // Right arrow key pressed
+      case "right":
+        // Don't allow movement past right edge
+        if (this.x < 402) {
+          this.x += 101;
+        }
+        break;
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function(e) {
-  if(isGameOver){ return;}
-    var allowedKeys = { //these number are the keycodes to use in programming and identify it
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
-    };
-if (allowedKeys[e.keyCode]) {//it will respond if I clickonly these keys to make sure
-  player.handleInput(allowedKeys[e.keyCode]) //when the user press any of these keys , it will handle the input
+      // Up arrow key pressed
+      case "up":
+        // if cross to the top without collection game end
+        if (this.y < 0) {
+          crossed++;
+          this.greatSuccess();
+        } else {
+          this.y -= 83;
+        }
+        break;
+
+      // Down arrow key pressed
+      case "down":
+        // Don't allow movement past bottom edge
+        if (this.y < 350) {
+          this.y += 83;
+        }
+        break;
+    }
+  }
 }
+
+
+// Create a new player character
+let player = new Player(200, 380, 50);
+
+// Speed variable; increases each time the player makes it across
+let speedUp = 25;
+
+// Initialize empty array to hold enemies
+let allEnemies = [];
+
+// Creating enemies
+for (var i = 0; i < 3; i++) {
+//speed the game more if I pass level by put more enimies
+  // Set speed at which enemies will travel
+  const startSpeed = speedUp * Math.floor(Math.random() * 10 + 1);
+
+  // Push each new enemy to the array
+  allEnemies.push(new Enemy(-100, 60 + (85 * i), startSpeed));
+}
+
+// Listen for keypress to control character
+document.addEventListener('keydown', function (e) {
+    if(isGameOver){ return;}
+  var allowedKeys = {
+    37: 'left',
+    38: 'up',
+    39: 'right',
+    40: 'down'
+  };
+
+  player.handleInput(allowedKeys[e.keyCode]);
 });
-// toast({html: 'you have'+ lives + 'remaining'});
-})()
