@@ -41,7 +41,7 @@ class Enemy extends Character {
     // which will ensure the game runs at the same speed for
     // all computers.
     this.x += this.speed * dt;
-    if(this.x > 700){ //if the enemy moves out the board don't allow him just back his position
+    if(this.x > 410){ //if the enemy moves out the board don't allow him just back his position
       this.x = -100; //to back it from beginning if go out of canvas picture with random speed
     var randomSpeed = Math.floor(Math.random() * 4 + 1); //assign random speed to the enemy
       this.speed = 120 * randomSpeed;
@@ -90,7 +90,12 @@ class Player extends Character {
   // When the player reaches the water, speed up enemies
   greatSuccess() {
     speedUp += 25;
-    this.resetGame();
+    this.startingX = 200;
+    this.startingY = 380;
+    this.x = this.startingX;
+    this.y = this.startingY;
+    player.resetPosition();
+    alert('Congraluation you cross and win, you will go to the next level');
   }
   // Start over once the player reaches the water
    resetGame() {
@@ -99,7 +104,6 @@ class Player extends Character {
      this.x = this.startingX;
      this.y = this.startingY;
      player.resetPosition();
-     alert('Congraluation you cross and win, you will go to the next level');
    }
 
   // Player controls
@@ -124,11 +128,14 @@ class Player extends Character {
 
       // Up arrow key pressed
       case "up":
+      console.log(this.y);
         // if cross to the top without collection game end
-        if (this.y < 0) {
-          crossed++;
-          this.greatSuccess();
-        } else {
+        if (this.y <= 72) {
+          this.y -= 83;
+            crossed++;
+            console.log(this.y);
+            setTimeout(this.greatSuccess,100);
+        }else {
           this.y -= 83;
         }
         break;
