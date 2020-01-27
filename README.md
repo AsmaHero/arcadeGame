@@ -11,3 +11,16 @@
 ## Contributing: 
 
 The game is when you dies 3 times will end. The game will contunue to run if you win to go to next level until you die then it is over.
+
+## Steps to do it: 
+* I initialize Character class with 4 properties : x,y,speed,image. and render function to draw the character on canvas
+* then these properties are inheritence by Enemy and Player Objects.
+* then we identify collisions wjil updating the function. and making the enemies speed normal not to slowly by using random speed.
+* then we use the directions in switch using x and y.
+*Identify the condition when we pass.
+
+
+
+
+
+
