@@ -7,6 +7,8 @@
 * Vehicle-player collisions happen logically (not too early or too late)
 * Vehicle-player collision resets the game
 * Something happens when player wins
+## How to play the game: 
+open index.html in your browser then you only allowed to use 4 keys left, right, up and down and try to not crash the enemies. If you pass the water then you will win and go to the next level. Until you die and the game is over.You are not allowed to go out of canvas by default.s
 
 ## Contributing: 
 
